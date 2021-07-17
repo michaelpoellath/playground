@@ -4,19 +4,20 @@ arch="$(uname -m)"  # -i is only linux, -m is linux and apple
 if [[ "$arch" = x86_64* ]]; then
     # NOTE: Rosetta Terminals will print x86_64 also for M1
     # Need to use uname -a to figure out that its ARM
+
+    libs=(helm argo argocd tilt-dev/tap/ctlptl tilt-dev/tap/tilt go-task/tap/go-task)
+    cmd=echo
     if [[ "$(uname -a)" = *ARM64* ]]; then
         # M1 Mac
-
-        arch -arm64 brew install helm
-        arch -arm64 brew install argo
-        arch -arm64 brew install argocd
-        arch -arm64 brew install txn2/tap/kubefwd
-        arch -arm64 brew install tilt-dev/tap/ctlptl
-        arch -arm64 brew install tilt-dev/tap/tilt
+        cmd="arch -arm64 brew install"
     else
-        echo 'unsupported'
-
+        cmd="brew install"
     fi
+
+    for lib in ${libs[@]}; do
+        ${cmd} ${lib}
+    done
+
 elif [[ "$arch" = i*86 ]]; then
     echo 'unsupported'
 elif [[ "$arch" = arm* ]]; then

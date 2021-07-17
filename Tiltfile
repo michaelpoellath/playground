@@ -4,7 +4,7 @@ load('ext://helm_remote', 'helm_remote')
 
 # ----------- Ingress ------------
 
-k8s_yaml('values/nginx.yaml')
+#k8s_yaml('values/nginx.yaml')
 
 # ----------- ArgoCD ------------
 #namespace_create('argocd')
@@ -12,6 +12,10 @@ k8s_yaml('values/nginx.yaml')
 # ---- Argo CD setup
 
 #k8s_yaml(namespace_inject(read_file('infra/argocd/argocd.yaml'), 'argocd'))
+
+# ----------- Images ------------
+docker_build('otel-py', 'images/otel-python/')
+
 
 
 # ----------- Telemetry ------------
@@ -24,6 +28,7 @@ namespace_create('telemetry')
 
 helm_remote('loki-stack', repo_url='https://grafana.github.io/helm-charts', repo_name='grafana', namespace='telemetry', set=['fluent-bit.enabled=true,promtail.enabled=false,grafana.enabled=true,grafana.adminPassword=admin,prometheus.enabled=true,prometheus.alertmanager.persistentVolume.enabled=false,prometheus.server.persistentVolume.enabled=false'])
 helm_remote('tempo', repo_url='https://grafana.github.io/helm-charts', repo_name='tempo', namespace='telemetry')
+helm_remote('opentelemetry-collector', repo_url='https://open-telemetry.github.io/opentelemetry-helm-charts', repo_name='open-telemetry', namespace='telemetry', values=['values/opentelemetry-collector.yaml'])
 
 # http://localhost:3000
 k8s_resource(workload='loki-stack-grafana', port_forwards='3000:3000')
@@ -45,5 +50,7 @@ k8s_resource(workload='argo-workflows-server', port_forwards='2746:2746')
 workflow_yamls = listdir('workflows', recursive=True)
 for workflow in workflow_yamls:
     k8s_yaml(namespace_inject(workflow, 'workflow'))
+    k8s_kind('WorkflowTemplate', image_json_path="{..image}")
+
 
 # submit workflow with 'argo submit -n workflow --from wftmpl/<name> --log'

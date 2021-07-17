@@ -1,0 +1,35 @@
+version: '3'
+
+tasks:
+  default:
+    cmds:
+      - task -l
+  up:
+    - task: registry_create
+    - task: cluster_create
+    - tilt ci
+
+  down:
+    - tilt down
+    - task: registry_delete
+    - task: cluster_delete
+
+  registry_create:
+    desc: Creates ctlptl-registry
+    cmds:
+      - ctlptl create registry ctlptl-registry --port=5005
+
+  registry_delete:
+    desc: Deletes ctlptl-registry
+    cmds:
+      - ctlptl delete registry ctlptl-registry
+
+  cluster_create:
+    desc: Creates ctlptl kind cluster
+    cmds:
+      - ctlptl create cluster kind --registry=ctlptl-registry
+
+  cluster_delete:
+    desc: Deletes ctlptl kind cluster
+    cmds:
+      - ctlptl delete cluster kind-kind

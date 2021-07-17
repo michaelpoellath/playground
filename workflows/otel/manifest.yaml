@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: otel
+spec:
+  entrypoint: run
+  templates:
+    - name: run
+      container:
+        image: otel-py
+        command: [python]
+        args: ["main.py"]
+        env:
+          - name: OTEL_PYTHON_LOG_CORRELATION
+            value: "true"

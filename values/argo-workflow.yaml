@@ -1,10 +1,11 @@
 singleNamespace: true
 
 controller:
+  parallelism: 5
   image:
     registry: quay.io
     repository: argoproj/workflow-controller
-    tag: "v3.1.1"
+    tag: "v3.1.0"
   metricsConfig:
     enabled: true
     path: /metrics
@@ -23,24 +24,23 @@ executor:
     # Overrides the image tag whose default is the chart appVersion.
     registry: quay.io
     repository: argoproj/argoexec
-    tag: "v3.1.1"
+    tag: "v3.1.0"
 
 server:
-  baseHref: "/argo/"
   image:
     # Overrides the image tag whose default is the chart appVersion.
     registry: quay.io
     repository: argoproj/argocli
-    tag: "v3.1.1"
+    tag: "v3.1.0"
   ingress:
-    enabled: true
-    annotations:
-      nginx.ingress.kubernetes.io/backend-protocol: HTTPS # ingress-nginx
-      nginx.ingress.kubernetes.io/rewrite-target: "/$1"
-#      kubernetes.io/ingress.class: "external"
-    hosts:
-      - localhost
-    paths:
-      - /argo/
-      - /argo/(.*)
+    enabled: false
+    # annotations:
+#       nginx.ingress.kubernetes.io/backend-protocol: HTTPS # ingress-nginx
+#       nginx.ingress.kubernetes.io/rewrite-target: "/$1"
+# #      kubernetes.io/ingress.class: "external"
+#     hosts:
+#       - localhost
+#     paths:
+#       - /argo/
+#       - /argo/(.*)
     https: false
