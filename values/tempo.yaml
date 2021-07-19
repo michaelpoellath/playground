@@ -1,0 +1,6 @@
+tempo:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+        http:

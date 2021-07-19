@@ -1,0 +1,45 @@
+apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: std-otel-collector
+  namespace: telemetry
+spec:
+  # use standard deployment
+  config: |
+    # not used to process logs
+    receivers:
+      otlp:
+        protocols:
+          #automatically uses default endpoints
+          grpc:
+          http:
+    processors:
+      # for now no processors
+
+    exporters:
+      otlp/trace:
+        endpoint: tempo.telemetry:4317
+        insecure: true
+
+      otlphttp:
+        traces_endpoint: http://tempo.telemetry:55680
+        metrics_endpoint: http://loki-stack-prometheus-pushgateway:9091
+        logs_endpoint: http://loki-stack:3100/loki/api/v1/push
+        insecure: true
+
+      logging:
+        loglevel: debug
+        sampling_initial: 500
+        sampling_thereafter: 1
+
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: []
+          exporters: [logging, otlp/trace]
+
+        metrics:
+          receivers: [otlp]
+          processors: []
+          exporters: [logging, otlphttp]

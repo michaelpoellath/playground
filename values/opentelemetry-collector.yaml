@@ -1,2 +1,55 @@
+config:
+  exporters:
+    otlphttp:
+      traces_endpoint: http://tempo:55681
+      metrics_endpoint: http://loki-stack-prometheus-pushgateway:9091
+      logs_endpoint: http://loki-stack:3100/loki/api/v1/push
+      insecure: true
+  receivers:
+    prometheus:
+      config:
+        scrape_configs:
+          - job_name: opentelemetry-collector
+            scrape_interval: 10s
+            static_configs:
+              - targets:
+                  - ${MY_POD_IP}:8888
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317
+        http:
+          endpoint: 0.0.0.0:55681
+
+
+service:
+    extensions:
+      - health_check
+    pipelines:
+      logs:
+        exporters:
+          - otlphttp
+        processors:
+          - memory_limiter
+          - batch
+        receivers:
+          - otlp
+      metrics:
+        exporters:
+          - otlphttp
+        processors:
+          - memory_limiter
+          - batch
+        receivers:
+          - otlp
+          - prometheus
+      traces:
+        exporters:
+          - otlphttp
+        processors:
+          - memory_limiter
+          - batch
+        receivers:
+          - otlp
 standaloneCollector:
   enabled: true

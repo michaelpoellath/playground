@@ -3,7 +3,7 @@ from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExport
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
-
+import time
 # Resource can be required for some backends, e.g. Jaeger
 # If resource wouldn't be set - traces wouldn't appears in Jaeger
 resource = Resource(attributes={
@@ -13,7 +13,7 @@ resource = Resource(attributes={
 trace.set_tracer_provider(TracerProvider(resource=resource))
 tracer = trace.get_tracer(__name__)
 
-url="http://opentelemetry-collector.telemetry:4317"
+url="http://std-otel-collector-collector.telemetry:4317"
 
 otlp_exporter = OTLPSpanExporter(endpoint=url, insecure=True)
 
@@ -27,8 +27,9 @@ LoggingInstrumentor().instrument(set_logging_format=True)
 
 import logging
 
-
 with tracer.start_as_current_span("foo"):
-    logging.info("Hello world!")
-    logging.debug('debug')
     logging.error('error')
+    with tracer.start_as_current_span("bar"):
+        with tracer.start_as_current_span("baz"):
+            logging.info("Hello world!")
+            logging.debug('debug')
