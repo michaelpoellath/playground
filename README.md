@@ -46,11 +46,20 @@ To get the help simply execute `task`.
 
 #### Hashicorp Vault
 
-| port-forwarded to localhost:9000
+> port-forwarded to localhost:8200
 
-To unseal and login download keys then run
 
+```sh
+export VAULT_ADDR='http://localhost:8200'
 ```
+
+Vault is setup'd in dev mode, this only requires to run
+``` sh
+vault login root
+```
+
+To unseal and login when Vault is started in prod mode
+```sh
 cat vault.json | jq '.keys_base64[0]' | xargs vault operator unseal
 cat vault.json | jq .root_token | xargs vault login
 ```
