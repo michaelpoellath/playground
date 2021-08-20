@@ -5,7 +5,8 @@ if [[ "$arch" = x86_64* ]]; then
     # NOTE: Rosetta Terminals will print x86_64 also for M1
     # Need to use uname -a to figure out that its ARM
 
-    libs=(helm argo argocd tilt-dev/tap/ctlptl tilt-dev/tap/tilt go-task/tap/go-task)
+
+    libs=(helm argo argocd tilt-dev/tap/ctlptl tilt-dev/tap/tilt go-task/tap/go-task hashicorp/tap/vault)
     cmd=echo
     if [[ "$(uname -a)" = *ARM64* ]]; then
         # M1 Mac
