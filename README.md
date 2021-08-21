@@ -10,6 +10,7 @@ Installation of necessary libraries:
 - [tilt](https://docs.tilt.dev/install.html)
 - [ctlptl](https://github.com/tilt-dev/ctlptl#how-do-i-install-it)
 - [go-task](https://github.com/go-task/task/blob/master/docs/installation.md#installation)
+- [Hashicorp Vault CLI](https://learn.hashicorp.com/tutorials/vault/getting-started-install)
 
 
 ``` sh
@@ -40,4 +41,27 @@ To get the help simply execute `task`.
 - FluentBit
 - Open Telemetry Collector
 - Argo Workflows
+- Hashicorp Vault
+
+
+#### Hashicorp Vault
+
+> port-forwarded to localhost:8200
+
+
+```sh
+export VAULT_ADDR='http://localhost:8200'
+```
+
+Vault is setup'd in dev mode, this only requires to run
+``` sh
+vault login root
+```
+
+To unseal and login when Vault is started in prod mode
+```sh
+cat vault.json | jq '.keys_base64[0]' | xargs vault operator unseal
+cat vault.json | jq .root_token | xargs vault login
+```
+
 

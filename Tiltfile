@@ -14,6 +14,11 @@ namespace_create('cert-manager')
 #k8s_yaml('values/nginx.yaml')
 helm_remote('cert-manager', repo_url='https://charts.jetstack.io', repo_name='jetstack', namespace='cert-manager', set=['installCRDs=true'])
 
+namespace_create('vault')
+#https://github.com/hashicorp/vault-helm
+#NOTE: starts vault in dev mode - https://www.vaultproject.io/docs/platform/k8s/helm/configuration#dev
+helm_remote('vault', repo_url='https://helm.releases.hashicorp.com', repo_name='hashicorp', namespace='vault', set=['server.dev.enabled=true'])
+k8s_resource(workload='vault', port_forwards='8200:8200')
 
 # ----------- ArgoCD ------------
 #namespace_create('argocd')
